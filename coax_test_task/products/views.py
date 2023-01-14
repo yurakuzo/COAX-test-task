@@ -1,10 +1,12 @@
 from django.shortcuts import render
+from rest_framework.response import Response
+from rest_framework.views import APIView
 
 from .models import Category, Product, Order
 
 from .forms import OrderForm
 
-from rest_framework import viewsets
+from rest_framework import viewsets, permissions, status
 
 from .serializers import OrderSerializer
 
@@ -42,4 +44,22 @@ class OrderViewSet(viewsets.ModelViewSet):
     serializer_class = OrderSerializer
 
 
+class OrderAPIViewSet(APIView):
+    permission_classes = [permissions.IsAuthenticated]
 
+    def get(self, request, *args, **kwargs):
+        orders = Order.objects.all()
+        serializer = OrderSerializer(orders, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    def post(self, request, *args, **kwargs):
+        data = {
+            'username': request.user.username,
+            'email': request.data.get('email'),
+            'product': request.data.get('product')
+        }
+        serializer = OrderSerializer(data=data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

@@ -2,11 +2,10 @@ from django.urls import path, include
 from . import views
 
 from rest_framework.routers import DefaultRouter
-from .views import OrderViewSet
 
 
 router = DefaultRouter()
-router.register(r'order', OrderViewSet)
+router.register(r'order', views.OrderViewSet)
 
 urlpatterns = [
     path('listing/', views.listing, name='listing'),
