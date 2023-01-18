@@ -1,4 +1,5 @@
 from django.shortcuts import render
+from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
@@ -39,17 +40,16 @@ def create_order(request):
     return render(request, "products/create_order.html", context=context)
 
 
+@api_view(('POST',))
 def create_order_jQuery(request):
     if request.method == "POST":
         form = OrderForm(request.POST)
         context = {'form': form}
-        print(request.POST)
         data = {
             'username': request.POST['username'],
             'email': request.POST['email'],
             'product': request.POST['product'],
         }
-        print(data)
         serializer = OrderSerializer(data=data)
         if serializer.is_valid():
             serializer.save()
