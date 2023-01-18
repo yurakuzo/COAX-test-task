@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+    <form method="POST">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <input type="submit" value="Submit">
+    </form>
+
+    <script>
+      document
+        .getElementById("id_location")
+        .addEventListener("change", save_data);
+
+      function save_data() {
+        var token = "{% csrf_token %}";
+        var username = $("#username").val();
+        var email = $("#email").val();
+        var product = $("#product").val();
+
+        $.ajax({
+          type: "POST",
+          headers: { "X-CSRFToken": token },
+          url: "{% url 'order' %}",
+          data: {
+              username: username,
+              email: email,
+              product: product
+          },
+
+          success: function (data) {
+            $("#error-list").html(
+              '<p style="color:brown">Form Successfully Submitted</p>'
+            );
+            console.log(data);
+          },
+          error: function (data) {},
+        });
+      }
+    </script>
+
+{% endblock %}

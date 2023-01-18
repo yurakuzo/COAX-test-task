@@ -10,5 +10,5 @@ router.register(r'order', views.OrderViewSet)
 urlpatterns = [
     path('listing/', views.listing, name='listing'),
     path('create-order/', views.create_order, name='create-order'),  # HTML
-    path('order/', include(router.urls), name='order'),  # DRF
+    path('order/', views.create_order_jQuery, name='order'),  # jQuery POST request
 ]

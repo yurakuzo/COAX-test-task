@@ -39,27 +39,50 @@ def create_order(request):
     return render(request, "products/create_order.html", context=context)
 
 
+def create_order_jQuery(request):
+    if request.method == "POST":
+        form = OrderForm(request.POST)
+        context = {'form': form}
+        print(request.POST)
+        data = {
+            'username': request.POST['username'],
+            'email': request.POST['email'],
+            'product': request.POST['product'],
+        }
+        print(data)
+        serializer = OrderSerializer(data=data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+    else:
+        form = OrderForm()
+        context = {
+            "form": form,
+        }
+    return render(request, "products/create_order_jQuery.html", context=context)
+
+
 class OrderViewSet(viewsets.ModelViewSet):
     queryset = Order.objects.all()
     serializer_class = OrderSerializer
 
 
-class OrderAPIViewSet(APIView):
-    permission_classes = [permissions.IsAuthenticated]
-
-    def get(self, request, *args, **kwargs):
-        orders = Order.objects.all()
-        serializer = OrderSerializer(orders, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
-
-    def post(self, request, *args, **kwargs):
-        data = {
-            'username': request.user.username,
-            'email': request.data.get('email'),
-            'product': request.data.get('product')
-        }
-        serializer = OrderSerializer(data=data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+# class OrderAPIViewSet(APIView):
+#     permission_classes = [permissions.IsAuthenticated]
+#
+#     def get(self, request, *args, **kwargs):
+#         orders = Order.objects.all()
+#         serializer = OrderSerializer(orders, many=True)
+#         return Response(serializer.data, status=status.HTTP_200_OK)
+#
+#     def post(self, request, *args, **kwargs):
+#         data = {
+#             'username': request.user.username,
+#             'email': request.data.get('email'),
+#             'product': request.data.get('product')
+#         }
+#         serializer = OrderSerializer(data=data)
+#         if serializer.is_valid():
+#             serializer.save()
+#             return Response(serializer.data, status=status.HTTP_201_CREATED)
+#         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
